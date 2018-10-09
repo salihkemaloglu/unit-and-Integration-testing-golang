@@ -182,6 +182,6 @@ func handleRequests() {
 }
 
 func main() {
-	LoadConfiguration()
+	// LoadConfiguration()
 	handleRequests()
 }
