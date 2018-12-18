@@ -9,24 +9,8 @@ import (
 	"github.com/rs/cors"
 	"goji.io"
 	"goji.io/pat"
-	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
-
-// Item - Our struct for all items
-type Item struct {
-	ID          bson.ObjectId `bson:"_id" json:"id"`
-	Name        string        `bson:"name" json:"name"`
-	Value       string        `bson:"value" json:"value"`
-	Description string        `bson:"description" json:"description"`
-}
-
-type Items []Item
-
-var db *mgo.Database
-
-//DB string
-var DB string
 
 func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the HomePage!Service is working")

@@ -1,4 +1,4 @@
-package main
+package data
 
 import (
 	"fmt"
@@ -7,6 +7,21 @@ import (
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
+
+// Item - Our struct for all items
+type Item struct {
+	ID          bson.ObjectId `bson:"_id" json:"id"`
+	Name        string        `bson:"name" json:"name"`
+	Value       string        `bson:"value" json:"value"`
+	Description string        `bson:"description" json:"description"`
+}
+
+type Items []Item
+
+var db *mgo.Database
+
+//DB string
+var DB string
 
 // Find list of Itemss
 func FindAll() ([]Item, error) {
