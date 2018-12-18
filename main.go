@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/rs/cors"
+	"github.com/salihkemaloglu/UnitAndIntegrationTesting-Golang/operations"
 	"goji.io"
 	"goji.io/pat"
 	"gopkg.in/mgo.v2/bson"
@@ -18,7 +19,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 
 // GET list of items
 func GetAll(w http.ResponseWriter, r *http.Request) {
-	items, err := FindAll()
+	items, err := data.FindAll()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -33,7 +34,7 @@ func GetById(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid item ID length")
 		return
 	}
-	item, err := FindById(params)
+	item, err := data.FindById(params)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid item ID")
 		return
@@ -44,13 +45,13 @@ func GetById(w http.ResponseWriter, r *http.Request) {
 // POST a new item
 func InsertItem(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	var item Item
+	var item data.Item
 	if err := json.NewDecoder(r.Body).Decode(&item); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 	item.ID = bson.NewObjectId()
-	if err := Insert(item); err != nil {
+	if err := data.Insert(item); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -60,7 +61,7 @@ func InsertItem(w http.ResponseWriter, r *http.Request) {
 // PUT update an existing item
 func UpdateItem(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	var newItem Item
+	var newItem data.Item
 	if err := json.NewDecoder(r.Body).Decode(&newItem); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
@@ -70,13 +71,13 @@ func UpdateItem(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid item ID length")
 		return
 	}
-	oldItem, err := FindById(params)
+	oldItem, err := data.FindById(params)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid item ID")
 		return
 	}
 	newItem.ID = oldItem.ID
-	if err := Update(newItem); err != nil {
+	if err := data.Update(newItem); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -87,7 +88,7 @@ func UpdateItem(w http.ResponseWriter, r *http.Request) {
 func DeleteItem(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	params := pat.Param(r, "id")
-	var newItem Item
+	var newItem data.Item
 	if err := json.NewDecoder(r.Body).Decode(&newItem); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
@@ -96,13 +97,13 @@ func DeleteItem(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid item ID length")
 		return
 	}
-	oldItem, err := FindById(params)
+	oldItem, err := data.FindById(params)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid item ID")
 		return
 	}
 	newItem.ID = oldItem.ID
-	if err := Delete(newItem); err != nil {
+	if err := data.Delete(newItem); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -132,6 +133,6 @@ func handleRequests() {
 }
 
 func main() {
-	LoadConfiguration()
+	data.LoadConfiguration()
 	handleRequests()
 }
