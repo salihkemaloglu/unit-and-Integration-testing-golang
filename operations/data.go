@@ -2,6 +2,7 @@ package data
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	mgo "gopkg.in/mgo.v2"
@@ -66,6 +67,7 @@ func Connect(connectionUrl string) {
 	}
 	session, err := mgo.DialWithInfo(info)
 	if err != nil {
+		fmt.Println("came here mongo")
 		fmt.Println(err.Error())
 	}
 	db = session.DB(DB)
@@ -73,9 +75,10 @@ func Connect(connectionUrl string) {
 
 //LoadConfiguration Parse the configuration file 'config.toml', and establish a connection to DB
 func LoadConfiguration() {
-	// var url = os.Getenv("HOST_ENV")
-	// DB = os.Getenv("DATABASE_ENV")
-	var url = "localhost:27017"
-	DB = "UnitGoo"
+	fmt.Println("get here")
+	fmt.Println(os.Getenv("HOST_ENV"))
+	fmt.Println(os.Getenv("DATABASE_ENV"))
+	var url = os.Getenv("HOST_ENV")
+	DB = os.Getenv("DATABASE_ENV")
 	Connect(url)
 }

@@ -1,0 +1,6 @@
+version: '2.2'
+services:
+  api:
+    environment:
+    - HOST_ENV=mongo:27017
+    - DATABASE_ENV=UnitDB

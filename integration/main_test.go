@@ -14,20 +14,21 @@ import (
 )
 
 func TestHttpRequestGetAll(t *testing.T) {
-	response := GetAll()
+	response, err := GetAll()
+	if err != nil {
+		t.Fatal("End point does not responde!", err.Error())
+	}
 	if response != nil {
-		if len(response) != 8 {
+		if len(response) != 3 {
 			t.Fatal("Expected value: 3 Received value:", len(response))
 		}
-	} else {
-		t.Fatal("End point does not responde!")
 	}
 
 }
 func TestHttpRequestInsert(t *testing.T) {
-	responseGetBefore := GetAll()
-	if responseGetBefore == nil {
-		t.Fatal("End point does not responde!")
+	responseGetBefore, err := GetAll()
+	if err != nil {
+		t.Fatal("End point does not responde!", err.Error())
 	}
 	item := data.Item{
 		Name:        "hey",
@@ -48,9 +49,9 @@ func TestHttpRequestInsert(t *testing.T) {
 			fmt.Printf("Json decode error!: %s", err)
 		}
 	}
-	responseGetAfter := GetAll()
-	if responseGetAfter == nil {
-		t.Fatal("End point does not responde!")
+	responseGetAfter, err := GetAll()
+	if err != nil {
+		t.Fatal("End point does not responde!", err.Error())
 	}
 	responseGetBeforeCount := len(responseGetBefore)
 	responseGetBeforeCount++
@@ -60,9 +61,9 @@ func TestHttpRequestInsert(t *testing.T) {
 }
 
 func TestHttpRequestUpdate(t *testing.T) {
-	responseGetBefore := GetAll()
-	if responseGetBefore == nil {
-		t.Fatal("End point does not responde!")
+	responseGetBefore, err := GetAll()
+	if err != nil {
+		t.Fatal("End point does not responde!", err.Error())
 	}
 	itemGet := responseGetBefore[len(responseGetBefore)-1]
 	itemGet.Name = "UpdateName"
@@ -90,9 +91,9 @@ func TestHttpRequestUpdate(t *testing.T) {
 		// fmt.Println("The update result is:", string(contents))
 	}
 
-	responseGetAfter := GetAll()
-	if responseGetAfter == nil {
-		t.Fatal("End point does not responde!")
+	responseGetAfter, err := GetAll()
+	if err != nil {
+		t.Fatal("End point does not responde!", err.Error())
 	}
 	itemUpdate := responseGetAfter[len(responseGetAfter)-1]
 	if itemGet.Name != itemUpdate.Name {
@@ -102,9 +103,9 @@ func TestHttpRequestUpdate(t *testing.T) {
 }
 
 func TestHttpRequestDelete(t *testing.T) {
-	responseGetBefore := GetAll()
-	if responseGetBefore == nil {
-		t.Fatal("End point does not responde!")
+	responseGetBefore, err := GetAll()
+	if err != nil {
+		t.Fatal("End point does not responde!", err.Error())
 	}
 	itemGet := responseGetBefore[0]
 	url := "http://localhost:8080/item/" + bson.ObjectId(itemGet.ID).Hex()
@@ -125,9 +126,9 @@ func TestHttpRequestDelete(t *testing.T) {
 		defer response.Body.Close()
 	}
 
-	responseGetAfter := GetAll()
-	if responseGetAfter == nil {
-		t.Fatal("End point does not responde!")
+	responseGetAfter, err := GetAll()
+	if err != nil {
+		t.Fatal("End point does not responde!", err.Error())
 	}
 	responseGetBeforeCount := len(responseGetBefore)
 	responseGetBeforeCount--
@@ -136,16 +137,16 @@ func TestHttpRequestDelete(t *testing.T) {
 	}
 }
 
-func GetAll() []data.Item {
+func GetAll() ([]data.Item, error) {
 	response, err := http.Get("http://localhost:8080/item")
 	if err != nil {
-		return nil
+		return nil, err
 	} else {
 		defer response.Body.Close()
 		var item []data.Item
 		if err := json.NewDecoder(response.Body).Decode(&item); err != nil {
 			fmt.Printf("Json decode error!: %s", err)
 		}
-		return item
+		return item, err
 	}
 }

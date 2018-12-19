@@ -7,10 +7,11 @@ import (
 	"net/http"
 
 	"github.com/rs/cors"
-	"github.com/salihkemaloglu/UnitAndIntegrationTesting-Golang/operations"
 	"goji.io"
 	"goji.io/pat"
 	"gopkg.in/mgo.v2/bson"
+
+	"github.com/salihkemaloglu/UnitAndIntegrationTesting-Golang/operations"
 )
 
 func homePage(w http.ResponseWriter, r *http.Request) {
