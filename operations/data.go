@@ -67,17 +67,13 @@ func Connect(connectionUrl string) {
 	}
 	session, err := mgo.DialWithInfo(info)
 	if err != nil {
-		fmt.Println("came here mongo")
-		fmt.Println(err.Error())
+		fmt.Println("Mongodb connection error!:", err.Error())
 	}
 	db = session.DB(DB)
 }
 
 //LoadConfiguration Parse the configuration file 'config.toml', and establish a connection to DB
 func LoadConfiguration() {
-	fmt.Println("get here")
-	fmt.Println(os.Getenv("HOST_ENV"))
-	fmt.Println(os.Getenv("DATABASE_ENV"))
 	var url = os.Getenv("HOST_ENV")
 	DB = os.Getenv("DATABASE_ENV")
 	Connect(url)

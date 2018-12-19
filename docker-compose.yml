@@ -5,6 +5,12 @@ services:
     image: webapigo
     ports:
       - 8080:8080
+  test:
+    container_name: test
+    image: webapitestgo
+    depends_on:
+        mongo:
+          condition: service_healthy
   mongo:
     image: mongo:latest
     container_name: mongo
