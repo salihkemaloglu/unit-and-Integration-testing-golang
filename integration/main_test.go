@@ -39,7 +39,7 @@ func TestHttpRequestInsert(t *testing.T) {
 	if err != nil {
 		fmt.Printf("Json decode error!: %s", err)
 	}
-	response, err := http.Post("http://localhost:8080/item", "application/json", bytes.NewBuffer(bytesRepresentation))
+	response, err := http.Post("http://142.93.98.36/item", "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		fmt.Printf("Request Error!: %s", err)
 	} else {
@@ -69,7 +69,7 @@ func TestHttpRequestUpdate(t *testing.T) {
 	itemGet.Name = "UpdateName"
 	itemGet.Value = "UpdateValue"
 	itemGet.Description = "UpdateDesc"
-	url := "http://localhost:8080/item/" + bson.ObjectId(itemGet.ID).Hex()
+	url := "http://142.93.98.36/item/" + bson.ObjectId(itemGet.ID).Hex()
 	bytesRepresentation, err := json.Marshal(itemGet)
 	if err != nil {
 		fmt.Printf("Json decode error!: %s", err)
@@ -108,7 +108,7 @@ func TestHttpRequestDelete(t *testing.T) {
 		t.Fatal("End point does not responde!", err.Error())
 	}
 	itemGet := responseGetBefore[0]
-	url := "http://localhost:8080/item/" + bson.ObjectId(itemGet.ID).Hex()
+	url := "http://142.93.98.36/item/" + bson.ObjectId(itemGet.ID).Hex()
 	bytesRepresentation, err := json.Marshal(itemGet)
 	if err != nil {
 		fmt.Printf("Json decode error!: %s", err)
@@ -138,7 +138,7 @@ func TestHttpRequestDelete(t *testing.T) {
 }
 
 func GetAll() ([]data.Item, error) {
-	response, err := http.Get("http://localhost:8080/item")
+	response, err := http.Get("http://142.93.98.36/item")
 	if err != nil {
 		return nil, err
 	} else {
