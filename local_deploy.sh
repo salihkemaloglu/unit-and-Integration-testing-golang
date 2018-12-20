@@ -1,14 +1,19 @@
 #!/bin/bash
-echo "Building webapi project..."
+
+BLUE='\033[1;34m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}Building webapi project...${NC}"
 docker build -t webapigo .
-echo "Open integration folder"
+echo -e "${BLUE}Open integration folder${NC}"
 cd integration
 
-echo "Build integration testing project..."
+echo -e "${GREEN}Build integration testing project...${NC}"
 docker build -t webapitestgo .
 
-echo "Go back main folder"
+echo -e "${BLUE}Go back main folder${NC}"
 cd ..
 
-echo "Integration testing is starting..."
+echo -e "${GREEN}Integration testing is starting...${NC}"
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
