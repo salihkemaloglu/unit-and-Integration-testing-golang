@@ -15,26 +15,13 @@ import (
 var baseUrl = "http://api:8080/item"
 
 func TestHttpRequestGetAll(t *testing.T) {
-	response, eType, err := GetAll()
-	if err != nil && eType == 0 {
-		t.Fatal("End point does not responde!", err.Error())
-	} else if eType == 1 {
-		t.Fatal("Page not found!")
-	} else if err != nil && eType == 2 {
-		t.Fatal("Json decode error!:", err)
-	} else {
-		if len(response) != 3 {
-			t.Fatal("Expected value: 3 Received value:", len(response))
-		}
+	response := GetAll(t)
+	if len(response) != 3 {
+		t.Fatal("Expected value: 3 Received value:", len(response))
 	}
 }
 func TestHttpRequestInsert(t *testing.T) {
-	responseGetBefore, eType, err := GetAll()
-	if err != nil && eType == 0 {
-		t.Fatal("End point does not responde!", err.Error())
-	} else if err != nil && eType == 1 {
-		t.Fatal("Json decode error!:", err)
-	}
+	responseGetBefore := GetAll(t)
 	item := data.Item{
 		Name:        "hey",
 		Value:       "val",
@@ -57,12 +44,7 @@ func TestHttpRequestInsert(t *testing.T) {
 		}
 	}
 
-	responseGetAfter, eType, err := GetAll()
-	if err != nil && eType == 0 {
-		t.Fatal("End point does not responde!", err.Error())
-	} else if err != nil && eType == 1 {
-		t.Fatal("Json decode error!:", err)
-	}
+	responseGetAfter := GetAll(t)
 	responseGetBeforeCount := len(responseGetBefore)
 	responseGetBeforeCount++
 	if responseGetBeforeCount != len(responseGetAfter) {
@@ -71,12 +53,7 @@ func TestHttpRequestInsert(t *testing.T) {
 }
 
 func TestHttpRequestUpdate(t *testing.T) {
-	responseGetBefore, eType, err := GetAll()
-	if err != nil && eType == 0 {
-		t.Fatal("End point does not responde!", err.Error())
-	} else if err != nil && eType == 1 {
-		t.Fatal("Json decode error!:", err)
-	}
+	responseGetBefore := GetAll(t)
 	itemGet := responseGetBefore[len(responseGetBefore)-1]
 	itemGet.Name = "UpdateName"
 	itemGet.Value = "UpdateValue"
@@ -98,12 +75,7 @@ func TestHttpRequestUpdate(t *testing.T) {
 		t.Fatal("Page not found error!:", err)
 	}
 	defer response.Body.Close()
-	responseGetAfter, eType, err := GetAll()
-	if err != nil && eType == 0 {
-		t.Fatal("End point does not responde!", err.Error())
-	} else if err != nil && eType == 1 {
-		t.Fatal("Json decode error!:", err)
-	}
+	responseGetAfter := GetAll(t)
 	itemUpdate := responseGetAfter[len(responseGetAfter)-1]
 	if itemGet.Name != itemUpdate.Name {
 		t.Fatal(fmt.Printf("Update Fail! Before Update: %v, After Update: %v \n", itemGet.Name, itemUpdate.Name))
@@ -112,12 +84,7 @@ func TestHttpRequestUpdate(t *testing.T) {
 }
 
 func TestHttpRequestDelete(t *testing.T) {
-	responseGetBefore, eType, err := GetAll()
-	if err != nil && eType == 0 {
-		t.Fatal("End point does not responde!", err.Error())
-	} else if err != nil && eType == 1 {
-		t.Fatal("Json decode error!:", err)
-	}
+	responseGetBefore := GetAll(t)
 	itemGet := responseGetBefore[0]
 	url := baseUrl + "/" + bson.ObjectId(itemGet.ID).Hex()
 	bytesRepresentation, err := json.Marshal(itemGet)
@@ -136,12 +103,7 @@ func TestHttpRequestDelete(t *testing.T) {
 		t.Fatal("Page not found error!:", err)
 	}
 	defer response.Body.Close()
-	responseGetAfter, eType, err := GetAll()
-	if err != nil && eType == 0 {
-		t.Fatal("End point does not responde!", err.Error())
-	} else if err != nil && eType == 1 {
-		t.Fatal("Json decode error!:", err)
-	}
+	responseGetAfter := GetAll(t)
 	responseGetBeforeCount := len(responseGetBefore)
 	responseGetBeforeCount--
 	if responseGetBeforeCount != len(responseGetAfter) {
@@ -149,19 +111,22 @@ func TestHttpRequestDelete(t *testing.T) {
 	}
 }
 
-func GetAll() ([]data.Item, int, error) {
+func GetAll(t *testing.T) []data.Item {
 	response, err := http.Get(baseUrl)
 	if err != nil {
-		return nil, 0, err
+		t.Fatal("End point does not responde!", err.Error())
+		return nil
 	} else if response.StatusCode == 404 {
-		return nil, 1, err
+		t.Fatal("Page not found!")
+		return nil
 	} else {
 		defer response.Body.Close()
 		var item []data.Item
 		if err := json.NewDecoder(response.Body).Decode(&item); err != nil {
-			return item, 2, err
+			t.Fatal("Json decode error!:", err)
+			return nil
 		} else {
-			return item, 3, err
+			return item
 		}
 	}
 }
