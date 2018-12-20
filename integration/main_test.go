@@ -18,7 +18,9 @@ func TestHttpRequestGetAll(t *testing.T) {
 	response, eType, err := GetAll()
 	if err != nil && eType == 0 {
 		t.Fatal("End point does not responde!", err.Error())
-	} else if err != nil && eType == 1 {
+	} else if eType == 1 {
+		t.Fatal("Page not found!")
+	} else if err != nil && eType == 2 {
 		t.Fatal("Json decode error!:", err)
 	} else {
 		if len(response) != 3 {
@@ -45,6 +47,8 @@ func TestHttpRequestInsert(t *testing.T) {
 	response, err := http.Post(baseUrl, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		fmt.Printf("Do request Error!: %s", err)
+	} else if response.StatusCode == 404 {
+		t.Fatal("Page not found!")
 	} else {
 		defer response.Body.Close()
 		var item data.Item
@@ -77,7 +81,7 @@ func TestHttpRequestUpdate(t *testing.T) {
 	itemGet.Name = "UpdateName"
 	itemGet.Value = "UpdateValue"
 	itemGet.Description = "UpdateDesc"
-	url := baseUrl + bson.ObjectId(itemGet.ID).Hex()
+	url := baseUrl + "/" + bson.ObjectId(itemGet.ID).Hex()
 	bytesRepresentation, err := json.Marshal(itemGet)
 	if err != nil {
 		fmt.Printf("Json decode error!: %s", err)
@@ -89,11 +93,11 @@ func TestHttpRequestUpdate(t *testing.T) {
 	}
 	response, err := client.Do(request)
 	if err != nil {
-		fmt.Printf("Do request Error!: %s", err)
-	} else {
-		defer response.Body.Close()
+		t.Fatal("Do request Error!:", err)
+	} else if response.StatusCode == 404 {
+		t.Fatal("Page not found error!:", err)
 	}
-
+	defer response.Body.Close()
 	responseGetAfter, eType, err := GetAll()
 	if err != nil && eType == 0 {
 		t.Fatal("End point does not responde!", err.Error())
@@ -115,7 +119,7 @@ func TestHttpRequestDelete(t *testing.T) {
 		t.Fatal("Json decode error!:", err)
 	}
 	itemGet := responseGetBefore[0]
-	url := baseUrl + bson.ObjectId(itemGet.ID).Hex()
+	url := baseUrl + "/" + bson.ObjectId(itemGet.ID).Hex()
 	bytesRepresentation, err := json.Marshal(itemGet)
 	if err != nil {
 		fmt.Printf("Json decode error!: %s", err)
@@ -127,11 +131,11 @@ func TestHttpRequestDelete(t *testing.T) {
 	}
 	response, err := client.Do(request)
 	if err != nil {
-		fmt.Printf("Do request Error!: %s", err)
-	} else {
-		defer response.Body.Close()
+		t.Fatal("Do request Error!:", err)
+	} else if response.StatusCode == 404 {
+		t.Fatal("Page not found error!:", err)
 	}
-
+	defer response.Body.Close()
 	responseGetAfter, eType, err := GetAll()
 	if err != nil && eType == 0 {
 		t.Fatal("End point does not responde!", err.Error())
@@ -149,13 +153,15 @@ func GetAll() ([]data.Item, int, error) {
 	response, err := http.Get(baseUrl)
 	if err != nil {
 		return nil, 0, err
+	} else if response.StatusCode == 404 {
+		return nil, 1, err
 	} else {
 		defer response.Body.Close()
 		var item []data.Item
 		if err := json.NewDecoder(response.Body).Decode(&item); err != nil {
-			return item, 1, err
-		} else {
 			return item, 2, err
+		} else {
+			return item, 3, err
 		}
 	}
 }
