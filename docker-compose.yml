@@ -9,16 +9,9 @@ services:
     container_name: test
     image: webapitestgo
     depends_on:
-        mongo:
-          condition: service_healthy
+      - 'mongo'
   mongo:
     image: mongo:latest
     container_name: mongo
     ports:
       - 27100:27017
-    healthcheck:
-      test: echo 'db.stats().ok' | mongo mongo:27017 --quiet
-      interval: 10s
-      timeout: 25s
-      retries: 1
-    command: mongod --smallfiles
