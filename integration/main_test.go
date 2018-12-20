@@ -40,7 +40,7 @@ func TestHttpRequestInsert(t *testing.T) {
 	if err != nil {
 		fmt.Printf("Json decode error!: %s", err)
 	}
-	response, err := http.Post("http://host.docker.internal:8080/item", "application/json", bytes.NewBuffer(bytesRepresentation))
+	response, err := http.Post("http://api:8080/item", "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		fmt.Printf("Do request Error!: %s", err)
 	} else {
@@ -75,7 +75,7 @@ func TestHttpRequestUpdate(t *testing.T) {
 	itemGet.Name = "UpdateName"
 	itemGet.Value = "UpdateValue"
 	itemGet.Description = "UpdateDesc"
-	url := "http://host.docker.internal:8080/item/" + bson.ObjectId(itemGet.ID).Hex()
+	url := "http://api:8080/item/" + bson.ObjectId(itemGet.ID).Hex()
 	bytesRepresentation, err := json.Marshal(itemGet)
 	if err != nil {
 		fmt.Printf("Json decode error!: %s", err)
@@ -113,7 +113,7 @@ func TestHttpRequestDelete(t *testing.T) {
 		t.Fatal("Json decode error!:", err)
 	}
 	itemGet := responseGetBefore[0]
-	url := "http://host.docker.internal:8080/item/" + bson.ObjectId(itemGet.ID).Hex()
+	url := "http://api:8080/item/" + bson.ObjectId(itemGet.ID).Hex()
 	bytesRepresentation, err := json.Marshal(itemGet)
 	if err != nil {
 		fmt.Printf("Json decode error!: %s", err)
@@ -144,7 +144,7 @@ func TestHttpRequestDelete(t *testing.T) {
 }
 
 func GetAll() ([]data.Item, int, error) {
-	response, err := http.Get("http://host.docker.internal:8080/item")
+	response, err := http.Get("http://api:8080/item")
 	if err != nil {
 		return nil, 0, err
 	} else {
