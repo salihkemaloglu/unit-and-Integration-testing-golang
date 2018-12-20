@@ -1,7 +1,7 @@
 version: '3'
 services:
   api:
-    container_name: webapi
+    container_name: api
     image: webapigo
     ports:
       - 8080:8080

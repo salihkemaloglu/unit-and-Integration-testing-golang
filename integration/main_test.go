@@ -12,7 +12,7 @@ import (
 	"github.com/salihkemaloglu/UnitAndIntegrationTesting-Golang/operations"
 )
 
-var baseUrl = "http://webapi:8080/item"
+var baseUrl = "http://api:8080/item"
 
 func TestHttpRequestGetAll(t *testing.T) {
 	response, eType, err := GetAll()
