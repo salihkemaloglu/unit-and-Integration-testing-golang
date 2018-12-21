@@ -12,7 +12,7 @@ import (
 	"github.com/salihkemaloglu/UnitAndIntegrationTesting-Golang/operations"
 )
 
-var baseUrl = "http://api:8080/item"
+var baseUrl = "http://api:8080/item/"
 
 func TestHttpRequestGetAll(t *testing.T) {
 	response := GetAll(t)
@@ -34,8 +34,8 @@ func TestHttpRequestInsert(t *testing.T) {
 	response, err := http.Post(baseUrl, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
 		fmt.Printf("Do request Error!: %s", err)
-	} else if response.StatusCode == 404 {
-		t.Fatal("Page not found!")
+	} else if response.StatusCode != 200 {
+		t.Fatal("Server side response not Ok!,Response StatusCode:", response.StatusCode)
 	} else {
 		defer response.Body.Close()
 		var item data.Item
@@ -71,8 +71,8 @@ func TestHttpRequestUpdate(t *testing.T) {
 	response, err := client.Do(request)
 	if err != nil {
 		t.Fatal("Do request Error!:", err)
-	} else if response.StatusCode == 404 {
-		t.Fatal("Page not found error!:", err)
+	} else if response.StatusCode != 200 {
+		t.Fatal("Server side response not Ok!,Response StatusCode:", response.StatusCode)
 	}
 	defer response.Body.Close()
 	responseGetAfter := GetAll(t)
@@ -99,8 +99,8 @@ func TestHttpRequestDelete(t *testing.T) {
 	response, err := client.Do(request)
 	if err != nil {
 		t.Fatal("Do request Error!:", err)
-	} else if response.StatusCode == 404 {
-		t.Fatal("Page not found error!:", err)
+	} else if response.StatusCode != 200 {
+		t.Fatal("Server side response not Ok!,Response StatusCode:", response.StatusCode)
 	}
 	defer response.Body.Close()
 	responseGetAfter := GetAll(t)
@@ -116,8 +116,8 @@ func GetAll(t *testing.T) []data.Item {
 	if err != nil {
 		t.Fatal("End point does not responde!", err.Error())
 		return nil
-	} else if response.StatusCode == 404 {
-		t.Fatal("Page not found!")
+	} else if response.StatusCode != 200 {
+		t.Fatal("Server side response not Ok!,Response StatusCode:", response.StatusCode)
 		return nil
 	} else {
 		defer response.Body.Close()
