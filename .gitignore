@@ -2,5 +2,6 @@
 .vs/
 .vscode/
 .idea
+.test
 vendor/
 go-realworld-clean
