@@ -9,7 +9,7 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/salihkemaloglu/UnitAndIntegrationTesting-Golang/operations"
+	. "github.com/salihkemaloglu/UnitAndIntegrationTesting-Golang/operations"
 )
 
 var baseUrl = "http://api:8080/item"
@@ -22,25 +22,25 @@ func TestHttpRequestGetAll(t *testing.T) {
 }
 func TestHttpRequestInsert(t *testing.T) {
 	responseGetBefore := GetAll(t)
-	item := data.Item{
+	item := Item{
 		Name:        "hey",
 		Value:       "val",
 		Description: "desc",
 	}
 	bytesRepresentation, err := json.Marshal(item)
 	if err != nil {
-		fmt.Printf("Json decode error!: %s", err)
+		t.Fatal("Json decode error!:", err)
 	}
 	response, err := http.Post(baseUrl, "application/json", bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
-		fmt.Printf("Do request Error!: %s", err)
+		t.Fatal("Do request Error!:", err)
 	} else if response.StatusCode != 200 {
 		t.Fatal("Server side response not Ok!,Response StatusCode:", response.StatusCode)
 	} else {
 		defer response.Body.Close()
-		var item data.Item
+		var item Item
 		if err := json.NewDecoder(response.Body).Decode(&item); err != nil {
-			fmt.Printf("Json decode error!: %s", err)
+			t.Fatal("Json decode error!:", err)
 		}
 	}
 
@@ -61,12 +61,12 @@ func TestHttpRequestUpdate(t *testing.T) {
 	url := baseUrl + "/" + bson.ObjectId(itemGet.ID).Hex()
 	bytesRepresentation, err := json.Marshal(itemGet)
 	if err != nil {
-		fmt.Printf("Json decode error!: %s", err)
+		t.Fatal("Json decode error!:", err)
 	}
 	client := &http.Client{}
 	request, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
-		fmt.Printf("Create request Error!: %s", err)
+		t.Fatal("Create request Error!:", err)
 	}
 	response, err := client.Do(request)
 	if err != nil {
@@ -89,12 +89,12 @@ func TestHttpRequestDelete(t *testing.T) {
 	url := baseUrl + "/" + bson.ObjectId(itemGet.ID).Hex()
 	bytesRepresentation, err := json.Marshal(itemGet)
 	if err != nil {
-		fmt.Printf("Json decode error!: %s", err)
+		t.Fatal("Json decode error!:", err)
 	}
 	client := &http.Client{}
 	request, err := http.NewRequest(http.MethodDelete, url, bytes.NewBuffer(bytesRepresentation))
 	if err != nil {
-		fmt.Printf("Create request Error!: %s", err)
+		t.Fatal("Create request Error!:", err)
 	}
 	response, err := client.Do(request)
 	if err != nil {
@@ -111,7 +111,7 @@ func TestHttpRequestDelete(t *testing.T) {
 	}
 }
 
-func GetAll(t *testing.T) []data.Item {
+func GetAll(t *testing.T) []Item {
 	response, err := http.Get(baseUrl)
 	if err != nil {
 		t.Fatal("End point does not responde!", err.Error())
@@ -121,7 +121,7 @@ func GetAll(t *testing.T) []data.Item {
 		return nil
 	} else {
 		defer response.Body.Close()
-		var item []data.Item
+		var item []Item
 		if err := json.NewDecoder(response.Body).Decode(&item); err != nil {
 			t.Fatal("Json decode error!:", err)
 			return nil

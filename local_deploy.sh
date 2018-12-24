@@ -6,6 +6,7 @@ NC='\033[0m' # No Color
 
 echo -e "${GREEN}Building webapi project...${NC}"
 docker build -t webapigo .
+
 echo -e "${BLUE}Open integration folder${NC}"
 cd integration
 
@@ -15,5 +16,14 @@ docker build -t webapitestgo .
 echo -e "${BLUE}Go back main folder${NC}"
 cd ..
 
-echo -e "${GREEN}Integration testing is starting...${NC}"
+echo -e "${BLUE}Open ginkgo folder${NC}"
+cd ginkgo
+
+echo -e "${GREEN}Build ginkgo testing project...${NC}"
+docker build -t webapiginkgo .
+
+echo -e "${BLUE}Go back main folder${NC}"
+cd ..
+
+echo -e "${GREEN}Tests are starting...${NC}"
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up

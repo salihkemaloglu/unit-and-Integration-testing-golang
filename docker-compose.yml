@@ -5,6 +5,9 @@ services:
     image: webapigo
     ports:
       - 8080:8080
+  ginkgo:
+    container_name: ginkgo
+    image: webapiginkgo    
   test:
     container_name: test
     image: webapitestgo

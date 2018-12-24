@@ -1,0 +1,14 @@
+FROM golang:1.10.1 AS builder
+RUN go version
+
+COPY . /go/src/ginkgo/
+WORKDIR /go/src/ginkgo/
+
+RUN  go get gopkg.in/mgo.v2/bson
+RUN  go get github.com/salihkemaloglu/UnitAndIntegrationTesting-Golang/operations
+RUN go get github.com/bclicn/color
+RUN go get github.com/onsi/ginkgo
+RUN go get github.com/onsi/gomega
+
+EXPOSE 8081
+ENTRYPOINT ["go","ginkgo"]
